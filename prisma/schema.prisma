@@ -1,0 +1,109 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum Role {
+  USER
+  HOSPITAL
+  ADMIN
+}
+
+model User {
+  id            String        @id @default(uuid())
+  fullName      String
+  email         String        @unique
+  password      String
+  phone         String
+  bloodGroup    String?
+  role          Role          @default(USER)
+
+  // location fields
+  latitude      Float?
+  longitude     Float?
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // hospital relation (if this user is a hospital admin)
+  hospital      Hospital?
+
+  // donor requests
+  requests      BloodRequest[] @relation("UserRequests")
+
+  // donor donations
+  donations     Donation[]     @relation("DonorDonations")
+}
+
+model Hospital {
+  id            String        @id @default(uuid())
+  name          String
+  address       String
+  phone         String
+
+  // location fields
+  latitude      Float
+  longitude     Float
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // linked user (hospital admin)
+  userId        String        @unique
+  user          User          @relation(fields: [userId], references: [id])
+
+  // incoming blood requests
+  requests      BloodRequest[] @relation("HospitalRequests")
+
+  // recorded donations
+  donations     Donation[]     @relation("HospitalDonations")
+}
+
+model BloodRequest {
+  id            String      @id @default(uuid())
+
+  bloodType     String
+  units         Int
+  urgency       String      @default("Normal")  // Normal | High
+  notes         String?
+
+  // donor who created the request (optional if hospital-only request)
+  userId        String?     
+  user          User?       @relation("UserRequests", fields: [userId], references: [id])
+
+  // hospital receiving the request
+  hospitalId    String
+  hospital      Hospital    @relation("HospitalRequests", fields: [hospitalId], references: [id])
+
+  // hospital location at time of request (for distance calculations)
+  latitude      Float
+  longitude     Float
+
+  status        String      @default("pending")  // pending | accepted | rejected
+
+  createdAt     DateTime    @default(now())
+}
+
+
+model Donation {
+  id            String    @id @default(uuid())
+
+  bloodGroup    String
+  quantity      Int
+  date          DateTime  @default(now())
+
+  // donor making the donation
+  donorId       String
+  donor         User      @relation("DonorDonations", fields: [donorId], references: [id])
+
+  // hospital receiving the donation
+  hospitalId    String
+  hospital      Hospital  @relation("HospitalDonations", fields: [hospitalId], references: [id])
+}
