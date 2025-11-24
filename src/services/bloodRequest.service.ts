@@ -87,7 +87,15 @@ interface AcceptRequestParams {
 export const acceptRequest = async ({ requestId, donorId }: AcceptRequestParams) => {
   return prisma.bloodRequest.update({
     where: { id: requestId },
-    data: { userId: donorId, status: "ACCEPTED" },
+    data: { userId: donorId, status: "accepted" },
+    include: { user: true, hospital: true },
+  });
+};
+
+export const rejectRequest = async ({ requestId, donorId }: AcceptRequestParams) => {
+  return prisma.bloodRequest.update({
+    where: { id: requestId },
+    data: { userId: donorId, status: "rejected" },
     include: { user: true, hospital: true },
   });
 };

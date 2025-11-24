@@ -113,6 +113,7 @@ export const loginUser = async ({
             fullName: user.fullName,
             email: user.email,
             role: user.role,
+            bloodGroup: user.bloodGroup,
             hospital: user.hospital || null,
         },
         token,

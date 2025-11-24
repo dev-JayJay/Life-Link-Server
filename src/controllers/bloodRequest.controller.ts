@@ -116,3 +116,17 @@ export const acceptRequest = async (req: Request, res: Response) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+export const rejectRequest = async (req: Request, res: Response) => {
+  try {
+
+    const accepted = await bloodRequestService.rejectRequest({
+      requestId: req.params.id,
+      donorId: req.user!.id,
+    });
+
+    res.status(200).json(accepted);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+};

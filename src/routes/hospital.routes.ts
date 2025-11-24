@@ -1,10 +1,11 @@
 // routes/hospital.routes.ts
 import { Router } from "express";
 import authMiddleware from "../middlewares/auth.middleware";
-import { getAllHospitals } from "../controllers/hospital.controller";
+import * as HospitalController from "../controllers/hospital.controller";
 
 const router = Router();
 
-router.get("/", authMiddleware, getAllHospitals);
+router.get("/", authMiddleware, HospitalController.getAllHospitals);
+router.get("/donations", authMiddleware, HospitalController.getHospitalDonations);
 
 export default router;
