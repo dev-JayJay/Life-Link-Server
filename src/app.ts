@@ -12,6 +12,10 @@ app.use(express.json());
 
 app.use("/api", indexRoutes);
 
+app.get("/", (req, res) => {
+  res.json({ status: "OK" , message: "welcome to life link server"});
+});
+
 app.get("/health", (req, res) => {
   res.json({ status: "OK" });
 });
