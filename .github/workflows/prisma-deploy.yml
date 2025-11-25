@@ -5,6 +5,7 @@ on:
     paths:
       - "prisma/schema.prisma"
       - "prisma/migrations/**"
+  workflow_dispatch:
 
 jobs:
   migrate:
