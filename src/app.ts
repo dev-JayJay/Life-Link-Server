@@ -15,5 +15,5 @@ app.use("/api", indexRoutes);
 app.get("/health", (req, res) => {
   res.json({ status: "OK" });
 });
-// lets test prisma
+
 export default app;
